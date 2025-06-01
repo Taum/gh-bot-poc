@@ -15,6 +15,7 @@ main_locale = locales[0]
 card_sets = ["BISE"]
 mainCosts = [3]
 factions = ["AX", "BR", "LY", "MU", "OR", "YZ"]
+# factions = ["MU"]
 rarities = ["UNIQUE"]
 
 max_cards_to_process = 5
@@ -136,11 +137,25 @@ def dict_recursive_diff(dict1, dict2):
         if key not in dict1:
             diff[key] = dict2[key]
         elif isinstance(dict2[key], dict) and isinstance(dict1[key], dict):
+            #print(f"**** Diffing subkey '{key}'\n1={dict1[key]}\n2={dict2[key]}")
             sub_diff = dict_recursive_diff(dict1[key], dict2[key])
             if len(sub_diff) > 0:
                 diff[key] = sub_diff
+        elif isinstance(dict2[key], list) and isinstance(dict1[key], list):
+            #print(f"**** Diffing list '{key}'\n1={dict1[key]}\n2={dict2[key]}")
+            for i, item in enumerate(dict2[key]):
+                if isinstance(item, dict) and isinstance(dict1[key][i], dict):
+                    sub_diff = dict_recursive_diff(dict1[key][i], item)
+                    if key not in diff:
+                        diff[key] = []
+                    diff[key].append(sub_diff)
+                elif item != dict1[key][i]:
+                    diff[key] = dict2[key]
+                    break
         elif dict2[key] != dict1[key]:
             diff[key] = dict2[key]
+    
+    #print(f"output -> {diff}")
     return diff
 
 
