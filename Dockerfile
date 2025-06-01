@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-alpine
+FROM python:3.13-alpine
 
 ENV GH_TOKEN=""
 
@@ -13,6 +13,9 @@ RUN ln -s /ghcli/bin/gh /usr/bin/gh
 
 RUN mkdir /app
 WORKDIR /app
+
+COPY requirements.txt /app/requirements.txt
+RUN pip3 install -r requirements.txt
 
 COPY loader /app/loader
 COPY scripts /app/scripts
